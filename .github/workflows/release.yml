@@ -1,0 +1,66 @@
+name: Build new release
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: read
+
+jobs:
+  build:
+    name: Build Docker
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@master
+    - name: Setup QEMU
+      uses: docker/setup-qemu-action@v1
+      with:
+        platforms: linux/amd64
+    - name: Setup Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v1
+      with:
+        buildkitd-flags: --debug
+    - name: Cache Docker sccache
+      uses: actions/cache@v2
+      with:
+        # this is horrible as you can't set the path but it probably works see:
+        # https://github.com/moby/buildkit/issues/1474
+        # https://github.com/moby/buildkit/issues/1512
+        path: ${{ runner.temp }}/cache.db
+        key: ${{ runner.os }}-docker-sccache-${{ github.sha }}
+        restore-keys: |
+          ${{ runner.os }}-docker-sccache-
+    - name: Move cache in
+      env:
+        CACHE_SOURCE: ${{ runner.temp }}/cache.db
+        CACHE_DEST: /var/lib/docker/buildkit/cache.db
+      # need sudo access to move to /var/lib/docker/buildkit/cache.db which is hopefully not going to change 🤞
+      run: |
+        if [ -f "$CACHE_SOURCE" ]; then
+          sudo mv $CACHE_SOURCE $CACHE_DEST
+          sudo chmod 0777 $CACHE_DEST
+          ls -ah $CACHE_DEST
+        fi
+    - name: Build Dependency layers
+      uses: docker/build-push-action@v2
+      with:
+        push: false
+        builder: ${{ steps.buildx.outputs.name }}
+        cache-from: type=local,src=${{ runner.temp }}/docker-buildx-cache
+        cache-to: type=local,dest=${{ runner.temp }}/docker-buildx-cache-new,mode=max
+        context: .
+        file: ./Dockerfile
+        platforms: linux/amd64
+    - name: Move cache out
+      env:
+        CACHE_SOURCE: /var/lib/docker/buildkit/cache.db
+        CACHE_DEST: ${{ runner.temp }}/cache.db
+      run: |
+        sudo mv $CACHE_SOURCE $CACHE_DEST
+        sudo chmod 0777 $CACHE_DEST
+        ls -ah $CACHE_DEST
