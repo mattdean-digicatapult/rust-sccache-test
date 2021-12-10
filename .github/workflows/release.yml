@@ -37,13 +37,13 @@ jobs:
           ${{ runner.os }}-docker-sccache-
     - name: Move cache in
       env:
-        CACHE_SOURCE: ${{ runner.temp }}/cache.db
-        CACHE_DEST: /var/lib/docker/buildkit/cache.db
+        CACHE_SOURCE: ${{ runner.temp }}/sccache
+        CACHE_DEST: /var/lib/docker/buildkit
       # need sudo access to move to /var/lib/docker/buildkit/cache.db which is hopefully not going to change 🤞
       run: |
         if [ -f "$CACHE_SOURCE" ]; then
-          sudo mv $CACHE_SOURCE $CACHE_DEST
-          sudo chmod 0777 $CACHE_DEST
+          sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
+          sudo chmod 0777 $CACHE_DEST/cache.db
           sudo ls -ah /var/lib/docker/buildkit/
         fi
     - name: Build Dependency layers
@@ -58,9 +58,10 @@ jobs:
         platforms: linux/amd64
     - name: Move cache out
       env:
-        CACHE_SOURCE: /var/lib/docker/buildkit/cache.db
-        CACHE_DEST: ${{ runner.temp }}/cache.db
+        CACHE_SOURCE: /var/lib/docker/buildkit
+        CACHE_DEST: ${{ runner.temp }}/sccache
       run: |
+        mkdir -p $CACHE_DEST
         sudo ls -lah /var/lib/docker/buildkit/
-        sudo mv $CACHE_SOURCE $CACHE_DEST
+        sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
         sudo chmod 0777 $CACHE_DEST
