@@ -31,7 +31,7 @@ jobs:
         # this is horrible as you can't set the path but it probably works see:
         # https://github.com/moby/buildkit/issues/1474
         # https://github.com/moby/buildkit/issues/1512
-        path: ${{ runner.temp }}/cache.db
+        path: ${{ runner.temp }}/sccache
         key: ${{ runner.os }}-docker-sccache-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-docker-sccache-
@@ -43,7 +43,7 @@ jobs:
       run: |
         if [ -f "$CACHE_SOURCE" ]; then
           sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
-          sudo chmod 0777 $CACHE_DEST/cache.db
+          sudo chmod -R 0777 $CACHE_DEST
           sudo ls -ah /var/lib/docker/buildkit/
         fi
     - name: Build Dependency layers
@@ -64,4 +64,4 @@ jobs:
         mkdir -p $CACHE_DEST
         sudo ls -lah /var/lib/docker/buildkit/
         sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
-        sudo chmod 0777 $CACHE_DEST
+        sudo chmod -R 0777 $CACHE_DEST
