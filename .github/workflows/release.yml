@@ -63,4 +63,4 @@ jobs:
       run: |
         sudo mv $CACHE_SOURCE $CACHE_DEST
         sudo chmod 0777 $CACHE_DEST
-        ls -ah $CACHE_DEST
+        ls -lah /var/lib/docker/buildkit/
