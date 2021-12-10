@@ -65,3 +65,4 @@ jobs:
         sudo ls -lah /var/lib/docker/buildkit/
         sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
         sudo chmod -R 0777 $CACHE_DEST
+        ls -lah ${{ runner.temp }}/sccache
