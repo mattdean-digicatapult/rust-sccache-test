@@ -41,7 +41,7 @@ jobs:
         CACHE_DEST: /var/lib/docker/buildkit
       # need sudo access to move to /var/lib/docker/buildkit/cache.db which is hopefully not going to change 🤞
       run: |
-        ls -ah $CACHE_SOURCE
+        ls -lah $CACHE_SOURCE
         if [ -f "$CACHE_SOURCE/cache.db" ]; then
           sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
           sudo chmod -R 0600 $CACHE_DEST/cache.db
