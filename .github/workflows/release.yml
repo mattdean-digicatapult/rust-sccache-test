@@ -66,4 +66,4 @@ jobs:
         sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
         sudo chmod -R 0644 $CACHE_DEST
         sudo chown -R runner:docker $CACHE_DEST
-        ls -lah ${{ runner.temp }}/sccache
+        sudo ls -lah ${{ runner.temp }}/sccache
