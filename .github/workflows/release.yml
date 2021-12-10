@@ -44,7 +44,7 @@ jobs:
         if [ -f "$CACHE_SOURCE" ]; then
           sudo mv $CACHE_SOURCE $CACHE_DEST
           sudo chmod 0777 $CACHE_DEST
-          ls -ah $CACHE_DEST
+          sudo ls -ah /var/lib/docker/buildkit/
         fi
     - name: Build Dependency layers
       uses: docker/build-push-action@v2
@@ -61,6 +61,6 @@ jobs:
         CACHE_SOURCE: /var/lib/docker/buildkit/cache.db
         CACHE_DEST: ${{ runner.temp }}/cache.db
       run: |
+        sudo ls -lah /var/lib/docker/buildkit/
         sudo mv $CACHE_SOURCE $CACHE_DEST
         sudo chmod 0777 $CACHE_DEST
-        ls -lah /var/lib/docker/buildkit/
