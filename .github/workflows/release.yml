@@ -64,6 +64,6 @@ jobs:
         mkdir -p $CACHE_DEST
         sudo ls -lah /var/lib/docker/buildkit/
         sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
-        sudo chmod -R 0644 $CACHE_DEST
+        sudo chmod -R 077 $CACHE_DEST
         sudo chown -R runner:docker $CACHE_DEST
         sudo ls -lah ${{ runner.temp }}/sccache
