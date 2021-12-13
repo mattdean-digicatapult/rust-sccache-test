@@ -17,6 +17,8 @@ jobs:
     container:
       image: docker:dind
       options: --privileged
+      volumes:
+        - "/tmp/sccache:/tmp/sccache"
 
     services:
       redis:
