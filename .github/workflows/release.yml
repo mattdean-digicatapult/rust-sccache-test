@@ -57,7 +57,7 @@ jobs:
         cat /etc/resolv.conf
     - name: Save sccache to disk
       env:
-        NETWORK: ${{ job.services.<service id>.network }}
+        NETWORK: ${{ job.services.redis.network }}
       run: |
         docker run --network=$NETWORK redis redis-cli -h redis SAVE
     - name: Build Dependency layers
@@ -72,7 +72,7 @@ jobs:
         platforms: linux/amd64
     - name: Save sccache to disk
       env:
-        NETWORK: ${{ job.services.<service id>.network }}
+        NETWORK: ${{ job.services.redis.network }}
       run: |
         docker run --network=$NETWORK redis redis-cli -h redis SAVE
     - name: Inspect cache out
