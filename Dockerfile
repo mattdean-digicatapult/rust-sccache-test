@@ -35,19 +35,4 @@ RUN --mount=type=cache,mode=0755,id=sccache,target=/cache \
     SCCACHE_DIR=/cache \
     SCCACHE_IDLE_TIMEOUT=0 \
     cargo build --release && \
-    cp /build/target/release/rust-sccache-test /rust-sccache-test && \
     du -sh /cache
-
-# build the runtime image that will actually contain the final built executable
-
-FROM alpine:3.12 AS runtime
-
-RUN apk update
-RUN apk add libgcc libstdc++
-
-RUN mkdir /rust-sccache-test /data
-COPY --from=build /rust-sccache-test /rust-sccache-test
-
-WORKDIR /rust-sccache-test
-
-CMD /rust-sccache-test/rust-sccache-test
