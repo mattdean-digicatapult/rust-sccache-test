@@ -52,6 +52,10 @@ jobs:
         key: ${{ runner.os }}-docker-sccache-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-docker-sccache-
+    - name: Save sccache to disk
+      run: |
+        ping redis
+        docker run redis redis-cli -h redis SAVE
     - name: Inspect cache in
       run: |
         ls -lah /tmp/sccache
