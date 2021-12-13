@@ -52,18 +52,10 @@ jobs:
         key: ${{ runner.os }}-docker-sccache-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-docker-sccache-
-    - name: Move cache in
-      env:
-        CACHE_SOURCE: /tmp/sccache
-        # CACHE_DEST: /var/lib/docker/buildkit
-      # need sudo access to move to /var/lib/docker/buildkit/cache.db which is hopefully not going to change 🤞
+    - name: Inspect cache in
       run: |
-        ls -lah $CACHE_SOURCE
-        # if [ -f "$CACHE_SOURCE/cache.db" ]; then
-        #   sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
-        #   sudo chmod -R 0600 $CACHE_DEST/cache.db
-        #   sudo chown -R root:root $CACHE_DEST/cache.db
-        # fi
+        ls -lah /tmp/sccache
+        du -sh /tmp/sccache
     - name: Build Dependency layers
       uses: docker/build-push-action@v2
       with:
@@ -74,14 +66,7 @@ jobs:
         context: .
         file: ./Dockerfile
         platforms: linux/amd64
-    - name: Move cache out
-      env:
-        # CACHE_SOURCE: /var/lib/docker/buildkit
-        CACHE_DEST: tmp/sccache
+    - name: Inspect cache out
       run: |
-        # mkdir -p $CACHE_DEST
-        # sudo ls -lah /var/lib/docker/buildkit/
-        # sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
-        # sudo chmod -R 0777 $CACHE_DEST
-        # sudo chown -R runner:docker $CACHE_DEST
-        sudo ls -lah /tmp/sccache
+        ls -lah /tmp/sccache
+        du -sh /tmp/sccache
