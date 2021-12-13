@@ -8,6 +8,8 @@ RUN apk add --no-cache \
   clang clang-dev clang-libs pkgconfig bearssl-dev git \
   gcc make g++ linux-headers protobuf protobuf-dev musl-dev
 
+RUN ping -c5 redis
+
 RUN set -ex; \
   wget https://github.com/gruntwork-io/fetch/releases/download/v0.4.2/fetch_linux_amd64 -P /; \
   mv /fetch_linux_amd64 /fetch; \
