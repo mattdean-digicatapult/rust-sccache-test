@@ -70,7 +70,7 @@ jobs:
         context: .
         file: ./Dockerfile
         platforms: linux/amd64
-        network: ${{ job.services.redis.network }}
+        network: bridge
     - name: Save sccache to disk
       env:
         NETWORK: ${{ job.services.redis.network }}
