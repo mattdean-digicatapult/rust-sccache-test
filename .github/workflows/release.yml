@@ -66,6 +66,9 @@ jobs:
         context: .
         file: ./Dockerfile
         platforms: linux/amd64
+    - name: Save sccache to disk
+      run: |
+        docker run redis redis-cli -h redis SAVE
     - name: Inspect cache out
       run: |
         ls -lah /tmp/sccache
