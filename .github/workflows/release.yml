@@ -52,13 +52,15 @@ jobs:
         key: ${{ runner.os }}-docker-sccache-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-docker-sccache-
-    - name: Save sccache to disk
-      run: |
-        docker run --net=host redis redis-cli -h redis SAVE
     - name: Inspect cache in
       run: |
         ls -lah /tmp/sccache
         du -sh /tmp/sccache
+        cat /etc/resolv.conf
+    - name: Save sccache to disk
+      run: |
+        docker run redis cat /etc/resolv.conf
+        docker run redis redis-cli -h redis SAVE
     - name: Build Dependency layers
       uses: docker/build-push-action@v2
       with:
