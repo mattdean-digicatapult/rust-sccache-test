@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1.2
 
 # build base that sets up common dependencies of the build
-FROM rust:alpine as build-base
+ARG BUILD_BASE_VERSION=alpine
+FROM rust:$BUILD_BASE_VERSION as build-base
 
 RUN apk add --no-cache \
   clang clang-dev clang-libs pkgconfig bearssl-dev git \
@@ -26,13 +27,11 @@ FROM build-base as build
 
 COPY . .
 
-RUN --mount=type=cache,mode=0755,id=sccache,target=/cache \
-    --mount=type=tmpfs,target=/build/target \
-    PROTOC=$(which protoc) \
+RUN PROTOC=$(which protoc) \
     PROTOC_INCLUDE=/usr/include \
     RUSTFLAGS=-Ctarget-feature=-crt-static \
     RUSTC_WRAPPER=/sccache \
-    SCCACHE_DIR=/cache \
+    SCCACHE_REDIS=redis://redis \
     SCCACHE_IDLE_TIMEOUT=0 \
     cargo build --release && \
-    du -sh /cache
+    rm -rf /build/target && \

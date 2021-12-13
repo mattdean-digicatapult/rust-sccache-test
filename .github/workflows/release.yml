@@ -14,6 +14,21 @@ jobs:
   build:
     name: Build Docker
     runs-on: ubuntu-latest
+    container:
+      image: docker:dind
+      options: --privileged
+
+    services:
+      redis:
+        image: redis
+        volumes:
+          - "${{ runner.temp }}/sccache:/data"
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     steps:
     - uses: actions/checkout@master
     - name: Setup QEMU
@@ -38,15 +53,15 @@ jobs:
     - name: Move cache in
       env:
         CACHE_SOURCE: ${{ runner.temp }}/sccache
-        CACHE_DEST: /var/lib/docker/buildkit
+        # CACHE_DEST: /var/lib/docker/buildkit
       # need sudo access to move to /var/lib/docker/buildkit/cache.db which is hopefully not going to change 🤞
       run: |
         ls -lah $CACHE_SOURCE
-        if [ -f "$CACHE_SOURCE/cache.db" ]; then
-          sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
-          sudo chmod -R 0600 $CACHE_DEST/cache.db
-          sudo chown -R root:root $CACHE_DEST/cache.db
-        fi
+        # if [ -f "$CACHE_SOURCE/cache.db" ]; then
+        #   sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
+        #   sudo chmod -R 0600 $CACHE_DEST/cache.db
+        #   sudo chown -R root:root $CACHE_DEST/cache.db
+        # fi
     - name: Build Dependency layers
       uses: docker/build-push-action@v2
       with:
@@ -59,12 +74,12 @@ jobs:
         platforms: linux/amd64
     - name: Move cache out
       env:
-        CACHE_SOURCE: /var/lib/docker/buildkit
+        # CACHE_SOURCE: /var/lib/docker/buildkit
         CACHE_DEST: ${{ runner.temp }}/sccache
       run: |
-        mkdir -p $CACHE_DEST
-        sudo ls -lah /var/lib/docker/buildkit/
-        sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
-        sudo chmod -R 0777 $CACHE_DEST
-        sudo chown -R runner:docker $CACHE_DEST
+        # mkdir -p $CACHE_DEST
+        # sudo ls -lah /var/lib/docker/buildkit/
+        # sudo mv $CACHE_SOURCE/cache.db $CACHE_DEST/cache.db
+        # sudo chmod -R 0777 $CACHE_DEST
+        # sudo chown -R runner:docker $CACHE_DEST
         sudo ls -lah ${{ runner.temp }}/sccache
