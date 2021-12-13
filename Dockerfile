@@ -34,4 +34,4 @@ RUN PROTOC=$(which protoc) \
     SCCACHE_REDIS=redis://redis \
     SCCACHE_IDLE_TIMEOUT=0 \
     cargo build --release && \
-    rm -rf /build/target && \
+    rm -rf /build/target \
