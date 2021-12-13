@@ -54,8 +54,7 @@ jobs:
           ${{ runner.os }}-docker-sccache-
     - name: Save sccache to disk
       run: |
-        ping redis
-        docker run redis redis-cli -h redis SAVE
+        docker run --net=host redis redis-cli -h redis SAVE
     - name: Inspect cache in
       run: |
         ls -lah /tmp/sccache
