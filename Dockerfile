@@ -31,7 +31,7 @@ RUN PROTOC=$(which protoc) \
     PROTOC_INCLUDE=/usr/include \
     RUSTFLAGS=-Ctarget-feature=-crt-static \
     RUSTC_WRAPPER=/sccache \
-    SCCACHE_REDIS=redis://redis \
+    SCCACHE_REDIS=redis://localhost:6379 \
     SCCACHE_IDLE_TIMEOUT=0 \
     cargo build --release && \
     rm -rf /build/target \
