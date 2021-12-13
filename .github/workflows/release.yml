@@ -59,8 +59,8 @@ jobs:
         cat /etc/resolv.conf
     - name: Save sccache to disk
       run: |
-        docker run redis cat /etc/resolv.conf
-        docker run redis redis-cli -h redis SAVE
+        docker run --net=host --dns=127.0.0.11 redis cat /etc/resolv.conf
+        docker run --net=host --dns=127.0.0.11 redis redis-cli -h redis SAVE
     - name: Build Dependency layers
       uses: docker/build-push-action@v2
       with:
