@@ -40,6 +40,11 @@ jobs:
       with:
         buildkitd-flags: --debug
         driver-opts: network=host
+    - name: Stop Redis services
+      env:
+        SERVICE_ID: ${{ job.services.redis.id }}
+      run: |
+        docker stop $SERVICE_ID
     - name: Cache Docker sccache
       uses: actions/cache@v2
       with:
@@ -51,13 +56,13 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-docker-sccache-
     - name: Inspect cache in
+      env:
+        SERVICE_ID: ${{ job.services.redis.id }}
       run: |
         ls -lah /tmp/sccache
         du -sh /tmp/sccache
-        cat /etc/resolv.conf
-    - name: Save sccache to disk
-      run: |
-        docker run --network=host redis redis-cli -h localhost SAVE
+        docker start $SERVICE_ID
+        sleep 30
     - name: Build Dependency layers
       uses: docker/build-push-action@v2
       with:
