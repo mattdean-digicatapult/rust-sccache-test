@@ -23,7 +23,6 @@ jobs:
         volumes:
           - "/tmp/sccache:/data"
         options: >-
-          --entrypoint "redis-server --maxmemory 500mb --maxmemory-policy maxmemory-policy"
           --health-cmd "redis-cli ping"
           --health-interval 10s
           --health-timeout 5s
@@ -54,10 +53,11 @@ jobs:
         key: ${{ runner.os }}-docker-sccache-${{ github.sha }}
         restore-keys: |
           ${{ runner.os }}-docker-sccache-
-    - name: Restart Redis service
+    - name: Restart Redis service and configure
       timeout-minutes: 1
       env:
         SERVICE_ID: ${{ job.services.redis.id }}
+        NETWORK: ${{ job.services.redis.network }}
       run: |
         docker start $SERVICE_ID
         while true; do
@@ -66,6 +66,9 @@ jobs:
           echo $STATUS
           [[ "$STATUS" == "healthy" ]] && break
         done
+        # github service containers don't support args. As a workaround we configure redis as a cache whilst running
+        docker run --network=$NETWORK redis redis-cli -h localhost CONFIG SET maxmemory 500mb
+        docker run --network=$NETWORK redis redis-cli -h localhost CONFIG SET maxmemory-policy allkeys-lru
     - name: Get Redis IP
       id: redis-info
       run: |
