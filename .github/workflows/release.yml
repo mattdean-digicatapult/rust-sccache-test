@@ -74,8 +74,8 @@ jobs:
       env:
         NETWORK: ${{ job.services.redis.network }}
       run: |
-        /usr/bin/docker inspect redis
-        ip=$(/usr/bin/docker inspect --format="{{print .NetworkSettings.Networks.$NETWORK.IPAddress }}" redis)
+        /usr/bin/docker container inspect redis
+        ip=$(/usr/bin/docker container inspect --format="{{print .NetworkSettings.Networks.$NETWORK.IPAddress }}" redis)
         echo "::set-output name=ip::$ip"
     - name: Build Dependency layers
       uses: docker/build-push-action@v2
