@@ -85,7 +85,7 @@ jobs:
         builder: ${{ steps.buildx.outputs.name }}
         cache-from: type=local,src=${{ runner.temp }}/docker-buildx-cache
         cache-to: type=local,dest=${{ runner.temp }}/docker-buildx-cache-new,mode=max
-        args: |
+        build-args: |
           BUILD_CONFIG_SCCACHE_REDIS=redis://${{ steps.redis-info.outputs.ip }}:6379
         context: .
         file: ./Dockerfile
