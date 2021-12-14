@@ -71,8 +71,11 @@ jobs:
         /usr/bin/docker run --network=$NETWORK redis redis-cli -h redis CONFIG SET maxmemory-policy allkeys-lru
     - name: Get Redis IP
       id: redis-info
+      env:
+        NETWORK: ${{ job.services.redis.network }}
       run: |
-        ip=$(/usr/bin/docker inspect --format="{{print .NetworkSettings.Networks.custom_network.IPAddress }}" redis)
+        /usr/bin/docker inspect redis
+        ip=$(/usr/bin/docker inspect --format="{{print .NetworkSettings.Networks.$NETWORK.IPAddress }}" redis)
         echo "::set-output name=ip::$ip"
     - name: Build Dependency layers
       uses: docker/build-push-action@v2
