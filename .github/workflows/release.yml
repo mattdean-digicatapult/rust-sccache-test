@@ -45,7 +45,7 @@ jobs:
         SERVICE_ID: ${{ job.services.redis.id }}
       run: |
         docker stop $SERVICE_ID
-        rm -rf /tmp/sccache/*
+        sudo rm -rf /tmp/sccache/*
     - name: Cache Docker sccache
       uses: actions/cache@v2
       with:
