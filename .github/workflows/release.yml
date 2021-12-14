@@ -72,7 +72,7 @@ jobs:
     - name: Get Redis IP
       id: redis-info
       run: |
-        $ip=(docker inspect --format="{{print .NetworkSettings.Networks.custom_network.IPAddress }}" redis)
+        ip=$(/usr/bin/docker inspect --format="{{print .NetworkSettings.Networks.custom_network.IPAddress }}" redis)
         echo "::set-output name=ip::$ip"
     - name: Build Dependency layers
       uses: docker/build-push-action@v2
