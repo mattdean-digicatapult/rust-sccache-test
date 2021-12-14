@@ -62,13 +62,13 @@ jobs:
         docker start $SERVICE_ID
         while true; do
           sleep 5
-          $STATUS=(/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" $SERVICE_ID)
+          $STATUS=$(/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" $SERVICE_ID)
           echo $STATUS
           [[ "$STATUS" == "healthy" ]] && break
         done
         # github service containers don't support args. As a workaround we configure redis as a cache whilst running
-        docker run --network=$NETWORK redis redis-cli -h localhost CONFIG SET maxmemory 500mb
-        docker run --network=$NETWORK redis redis-cli -h localhost CONFIG SET maxmemory-policy allkeys-lru
+        /usr/bin/docker run --network=$NETWORK redis redis-cli -h localhost CONFIG SET maxmemory 500mb
+        /usr/bin/docker run --network=$NETWORK redis redis-cli -h localhost CONFIG SET maxmemory-policy allkeys-lru
     - name: Get Redis IP
       id: redis-info
       run: |
@@ -90,4 +90,4 @@ jobs:
       env:
         NETWORK: ${{ job.services.redis.network }}
       run: |
-        docker run --network=$NETWORK redis redis-cli -h localhost SAVE
+        /usr/bin/docker run --network=$NETWORK redis redis-cli -h localhost SAVE
