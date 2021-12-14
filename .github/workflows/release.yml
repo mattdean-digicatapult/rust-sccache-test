@@ -62,7 +62,7 @@ jobs:
         docker start $SERVICE_ID
         while true; do
           sleep 5
-          $STATUS=$(/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" $SERVICE_ID)
+          STATUS=$(/usr/bin/docker inspect --format="{{if .Config.Healthcheck}}{{print .State.Health.Status}}{{end}}" $SERVICE_ID)
           echo $STATUS
           [[ "$STATUS" == "healthy" ]] && break
         done
